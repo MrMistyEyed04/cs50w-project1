@@ -1,31 +1,29 @@
-import csv
 import os
+import requests
 
+import csv
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import scoped_session, sessionmaker
-from dotenv import load_dotenv
 
-load_dotenv()
+# Set up database
+engine = create_engine("postgresql://postgres:pzwb1oZ6G1vnfPKqLACY@containers-us-west-50.railway.app:7854/railway")
 
-engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
-def read_file(filename, col_list):
-    with open(filename, 'r') as f:
-        reader = csv.DictReader(f)
- 
-        for row in reader:    
-            dato1=text("INSERT INTO libro (isbn, titulo, autor, año_publication) VALUES (:isbn, :titulo, :author, :year)")
-            db.execute(dato1,
-                    {"isbn": row["isbn"], "titulo":row["title"], "author":row["author"], "year":row["year"]})
-            db.commit()
-                    
-
 def main():
-    read_file('books.csv', ['isbn', 'title', 'author', 'year'])
-    
-    
+    libros = open("books.csv")
+    leer = csv.reader(libros)
+    i = 0
+    cont = 0
+    for isbn, title, author, year in leer:
+        if (i == 0):
+            i = 1
+        else:
+            insertar = text("INSERT INTO books (isbn, title, author, year) values(:isbn,:title,:author,:year)")
+            db.execute(insertar, {"isbn":isbn,"title":title,"author":author,"year":year})
+            db.commit()
+            cont = cont + 1
+        print(cont, end=" ")
+        print(f"{isbn} - {title} - {author} - {year}")
 
-
-if __name__ == "__main__":
-    main()
+main()
