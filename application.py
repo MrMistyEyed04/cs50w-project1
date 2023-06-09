@@ -5,6 +5,7 @@ from flask_session import Session
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import scoped_session, sessionmaker
 from dotenv import load_dotenv
+from werkzeug.security import generate_password_hash, check_password_hash
 
 load_dotenv()
 
@@ -31,24 +32,26 @@ def index():
 @app.route("/login", methods = ['GET', 'POST'])
 def login ():
     if request.method == "POST":
-        if not request.form.get("username"): # Si no recibo ningún dato desde el campo username de mi html, entonces retorna una plantilla html y manda un mensaje de error
+        username = request.form.get("username")
+        password=request.form.get("password")
+        if not username: # Si no recibo ningún dato desde el campo username de mi html, entonces retorna una plantilla html y manda un mensaje de error
             return render_template("login.html", message="Llena el campo username") # El message es la manipulación que yo haré para trabajar los distintos errores dentro de error.html
-        if not request.form.get("password"): # Si no recibo ningún dato desde el campo password de mi html, entonces retorda una plantilla html y manda un mensaje de error
+        if not password: # Si no recibo ningún dato desde el campo password de mi html, entonces retorda una plantilla html y manda un mensaje de error
             return render_template("login.html", message="Llena el campo password")
 
-        entrada = db.execute ("SELECT * FROM users WHERE username = :username",
-                               username=request.form.get("username"))
+        consulta= text("SELECT * FROM users WHERE name = :username")
+        entrada = db.execute (consulta, {"username":username}).fetchall()
 
-        if len(entrada) != 1 or not check_password_hash(entrada[0]["password"], request.form.get("password")):
+        if len(entrada) != 1 or not check_password_hash(entrada[0][2], password):
             return render_template("login.html", message="Nombre de usuario o contraseña incorrecto")
 
-        session["user_id"]=entrada[0]["id_user"]
-        session["username"]=entrada[0]["username"]
-        return redirect("/")
+        session["user_id"]=entrada[0][0]
+        session["username"]=entrada[0][1]
+        return redirect("/inicio")
 
     else:
         return render_template("login.html")
-
+    
 @app.route("/register", methods=["GET","POST"])
 def register():
     if request.method == "POST":
@@ -86,5 +89,11 @@ def register():
         return redirect("/inicio")
     return render_template('register.html')
 
-
-
+@app.route("/inicio", methods=["GET","POST"])
+def inicio():
+    if request.method == "POST":
+        datos=request.form.get("datos")
+        consulta = text("SELECT * FROM books WHERE isbn =:datos OR title =:datos OR author =:datos")
+        respuesta = db.execute(consulta,{"datos":datos}).fetchall()
+        print(respuesta)
+    return render_template("/inicio.html")

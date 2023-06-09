@@ -6,7 +6,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 # Set up database
-engine = create_engine("postgresql://postgres:pzwb1oZ6G1vnfPKqLACY@containers-us-west-50.railway.app:7854/railway")
+engine = create_engine("postgresql://postgres:AwHB8WKoQmOrj3fWpmgy@containers-us-west-67.railway.app:6724/railway")
 
 db = scoped_session(sessionmaker(bind=engine))
 
