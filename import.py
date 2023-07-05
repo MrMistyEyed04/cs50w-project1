@@ -1,29 +1,27 @@
-import os
-import requests
+import os, csv
 
-import csv
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
-# Set up database
-engine = create_engine("postgresql://postgres:AwHB8WKoQmOrj3fWpmgy@containers-us-west-67.railway.app:6724/railway")
+# database engine object from SQLAlchemy that manages connections to the database
+engine = create_engine(os.getenv("DATABASE_URL"))
 
+# create a 'scoped session' that ensures different users' interactions with the
+# database are kept separate
 db = scoped_session(sessionmaker(bind=engine))
 
-def main():
-    libros = open("books.csv")
-    leer = csv.reader(libros)
-    i = 0
-    cont = 0
-    for isbn, title, author, year in leer:
-        if (i == 0):
-            i = 1
-        else:
-            insertar = text("INSERT INTO books (isbn, title, author, year) values(:isbn,:title,:author,:year)")
-            db.execute(insertar, {"isbn":isbn,"title":title,"author":author,"year":year})
-            db.commit()
-            cont = cont + 1
-        print(cont, end=" ")
-        print(f"{isbn} - {title} - {author} - {year}")
+file = open("books.csv")
 
-main()
+reader = csv.reader(file)
+
+for isbn, title, author, year in reader:
+
+    db.execute("INSERT INTO books (isbn, title, author, year) VALUES (:isbn, :title, :author, :year)",
+                {"isbn": isbn, 
+                 "title": title,
+                 "author": author,
+                 "year": year})
+
+    print(f"Added book {title} to database.")
+
+    db.commit()

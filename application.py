@@ -51,11 +51,7 @@ def login():
         elif not request.form.get("password"):
             return render_template("error.html", message="debe escribir una contraseña")
 
-        # Query database for username (http://zetcode.com/db/sqlalchemy/rawsql/)
-        # https://docs.sqlalchemy.org/en/latest/core/connections.html#sqlalchemy.engine.ResultProxy
-        rows = db.execute("SELECT * FROM users WHERE username = :username",
-                            {"username": username})
-        
+        rows = db.execute("SELECT * FROM users WHERE username = :username",{"username": username})
         result = rows.fetchone()
 
         # Ensure username exists and password is correct
