@@ -45,11 +45,11 @@ def login():
 
         # Ensure username was submitted
         if not request.form.get("username"):
-            return render_template("error.html", message="must provide username")
+            return render_template("error.html", message="debe escribir un nombre de usuario")
 
         # Ensure password was submitted
         elif not request.form.get("password"):
-            return render_template("error.html", message="must provide password")
+            return render_template("error.html", message="debe escribir una contraseña")
 
         # Query database for username (http://zetcode.com/db/sqlalchemy/rawsql/)
         # https://docs.sqlalchemy.org/en/latest/core/connections.html#sqlalchemy.engine.ResultProxy
@@ -60,7 +60,7 @@ def login():
 
         # Ensure username exists and password is correct
         if result == None or not check_password_hash(result[2], request.form.get("password")):
-            return render_template("error.html", message="invalid username and/or password")
+            return render_template("error.html", message="Nombre de usuario/contraseña invalida")
 
         # Remember which user has logged in
         session["user_id"] = result[0]
