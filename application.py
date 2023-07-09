@@ -5,7 +5,8 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import scoped_session, sessionmaker
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
-from helpers import login_required
+from helpers import *
+from cs50 import SQL
 
 
 load_dotenv()
@@ -45,11 +46,11 @@ def login():
 
         # Ensure username was submitted
         if not request.form.get("username"):
-            return render_template("error.html", message="debe escribir un nombre de usuario")
+            return render_template("error.html", message="Debe escribir un nombre de usuario")
 
         # Ensure password was submitted
         elif not request.form.get("password"):
-            return render_template("error.html", message="debe escribir una contraseña")
+            return render_template("error.html", message="Debe escribir una contraseña")
 
         rows = db.execute("SELECT * FROM users WHERE username = :username",{"username": username})
         result = rows.fetchone()
@@ -94,8 +95,9 @@ def register():
             return render_template("error.html", message="must provide username")
 
         # Query database for username
-        userCheck = db.execute("SELECT * FROM users WHERE username = :username",
-                          {"username":request.form.get("username")}).fetchone()
+        query = text("SELECT * FROM users WHERE username = :username")
+        userCheck = db.execute(query, {"username": request.form.get("username")}).fetchone()
+
 
         # Check if username already exist
         if userCheck:
