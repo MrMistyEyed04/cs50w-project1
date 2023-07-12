@@ -52,7 +52,8 @@ def login():
         elif not request.form.get("password"):
             return render_template("error.html", message="Debe escribir una contraseña")
 
-        rows = db.execute("SELECT * FROM users WHERE username = :username",{"username": username})
+        sql_expression = text('SELECT * FROM users WHERE username = :username')
+        rows = db.execute(sql_expression, {"username": username})
         result = rows.fetchone()
 
         # Ensure username exists and password is correct
@@ -92,7 +93,7 @@ def register():
 
         # Ensure username was submitted
         if not request.form.get("username"):
-            return render_template("error.html", message="must provide username")
+            return render_template("error.html", message="Debe escribir un nombre de usuario")
 
         # Query database for username
         query = text("SELECT * FROM users WHERE username = :username")
@@ -101,35 +102,37 @@ def register():
 
         # Check if username already exist
         if userCheck:
-            return render_template("error.html", message="username already exist")
+            return render_template("error.html", message="Nombre de usuario ya existente")
 
         # Ensure password was submitted
         elif not request.form.get("password"):
-            return render_template("error.html", message="must provide password")
+            return render_template("error.html", message="Debe escribir una contraseña")
 
         # Ensure confirmation wass submitted 
         elif not request.form.get("confirmation"):
-            return render_template("error.html", message="must confirm password")
+            return render_template("error.html", message="Debe confirmar la contraseña")
 
         # Check passwords are equal
         elif not request.form.get("password") == request.form.get("confirmation"):
-            return render_template("error.html", message="passwords didn't match")
+            return render_template("error.html", message="Contraseñas distintas")
         
         # Hash user's password to store in DB
         hashedPassword = generate_password_hash(request.form.get("password"), method='pbkdf2:sha256', salt_length=8)
         
         # Insert register into DB
-        db.execute("INSERT INTO users (username, hash) VALUES (:username, :password)",
-                            {"username":request.form.get("username"), 
-                             "password":hashedPassword})
+        query = text("INSERT INTO users (username, password) VALUES (:username, :password)").bindparams(
+        username=request.form.get("username"),
+        password=hashedPassword)
+
+        db.execute(query)
 
         # Commit changes to database
         db.commit()
 
         flash('Account created', 'info')
 
-        # Redirect user to login page
-        return redirect("/login")
+        # Redirect user to index page
+        return redirect("/")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
@@ -142,7 +145,7 @@ def search():
 
     # Check book id was provided
     if not request.args.get("book"):
-        return render_template("error.html", message="you must provide a book.")
+        return render_template("error.html", message="Debe proporcionar un libro.")
 
     # Take input and add a wildcard
     query = "%" + request.args.get("book") + "%"
@@ -151,15 +154,16 @@ def search():
     # https://docs.python.org/3.7/library/stdtypes.html?highlight=title#str.title
     query = query.title()
     
-    rows = db.execute("SELECT isbn, title, author, year FROM books WHERE \
-                        isbn LIKE :query OR \
-                        title LIKE :query OR \
-                        author LIKE :query LIMIT 15",
-                        {"query": query})
+    sql_expression = text('SELECT isbn, title, author, year FROM books WHERE \
+                       isbn LIKE :query OR \
+                       title LIKE :query OR \
+                       author LIKE :query LIMIT 15')
+
+    rows = db.execute(sql_expression, query=query)
     
     # Books not founded
     if rows.rowcount == 0:
-        return render_template("error.html", message="we can't find books with that description.")
+        return render_template("error.html", message="No se pudo encontar libro con esa descripcion.")
     
     # Fetch all the results
     books = rows.fetchall()

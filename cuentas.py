@@ -12,7 +12,7 @@ db = scoped_session(sessionmaker(bind=engine))
 def main():
     creacion = text("""CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
+    username TEXT NOT NULL,
     password TEXT NOT NULL
     );
     """)
