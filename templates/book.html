@@ -12,19 +12,16 @@
         </div>
         <div class="col-sm-4">
             <h1>{{bookInfo[0]['title']}}</h1>
-            <h5>Author: {{bookInfo[0]['author']}}</h5>
-            <h5>Published: {{bookInfo[0]['year']}}</h5>
-            <h5>ISBN-10: {{bookInfo[0]['isbn']}}</h5>
+            <h5>Autor: {{bookInfo[0]['author']}}</h5>
+            <h5>Año de publicacion: {{bookInfo[0]['year']}}</h5>
+            <h5>ISBN: {{bookInfo[0]['isbn']}}</h5>
         </div>
 
         <!--GOODREADS REVIEWS -->
         <div class="col-sm-4">
-            <img class="mb-3" src="../static/biblioteca.jpg" alt="Goodreads" width="200" height="45">
-            <h5>Nº of Ratings: {{bookInfo[1]['work_ratings_count']}}</h5>
-            <h5>Average Rating: {{bookInfo[1]['average_rating']}}</h5>
-            <h5>
-                <a href="https://www.goodreads.com/search?q={{bookInfo[0]['title']}}">Goodreads page</a>
-            </h5>
+            <img class="mb-3" src="../static/biblioteca.jpg" alt="Google Books" width="200" height="70">
+            <h5>Nº de reseñas: {{bookInfo[1]['work_ratings_count']}}</h5>
+            <h5>Calificacion promedio: {{bookInfo[1]['average_rating']}}</h5>
         </div>
     </div>
     <div class="dropdown-divider"></div>

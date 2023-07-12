@@ -200,7 +200,7 @@ def book(isbn):
         # A review already exists
         if row2.rowcount == 1:
             
-            flash('You already submitted a review for this book', 'warning')
+            flash('Ya has enviado una reseña para este libro.', 'warning')
             return redirect("/book/" + isbn)
 
         # Convert to save into DB
@@ -212,7 +212,7 @@ def book(isbn):
         # Commit transactions to DB and close the connection
         db.commit()
 
-        flash('Review submitted!', 'info')
+        flash('Reseña enviada!', 'info')
 
         return redirect("/book/" + isbn)
     
