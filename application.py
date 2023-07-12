@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
 from helpers import *
 from cs50 import SQL
+import requests
 
 
 load_dotenv()
@@ -129,7 +130,7 @@ def register():
         # Commit changes to database
         db.commit()
 
-        flash('Account created', 'info')
+        flash('Cuenta creada', 'info')
 
         # Redirect user to index page
         return redirect("/")
@@ -185,17 +186,16 @@ def book(isbn):
         comment = request.form.get("comment")
         
         # Search book_id by ISBN
-        row = db.execute("SELECT id FROM books WHERE isbn = :isbn",
-                        {"isbn": isbn})
+        query = text("SELECT id FROM books WHERE isbn = :isbn")
+        row = db.execute(query, {"isbn": isbn})
 
         # Save id into variable
         bookId = row.fetchone() # (id,)
         bookId = bookId[0]
 
         # Check for user submission (ONLY 1 review/user allowed per book)
-        row2 = db.execute("SELECT * FROM reviews WHERE user_id = :user_id AND book_id = :book_id",
-                    {"user_id": currentUser,
-                     "book_id": bookId})
+        query = text("SELECT * FROM reviews WHERE user_id = :user_id AND book_id = :book_id")
+        row2 = db.execute(query, {"user_id": currentUser, "book_id": bookId})
 
         # A review already exists
         if row2.rowcount == 1:
@@ -206,12 +206,8 @@ def book(isbn):
         # Convert to save into DB
         rating = int(rating)
 
-        db.execute("INSERT INTO reviews (user_id, book_id, comment, rating) VALUES \
-                    (:user_id, :book_id, :comment, :rating)",
-                    {"user_id": currentUser, 
-                    "book_id": bookId, 
-                    "comment": comment, 
-                    "rating": rating})
+        query = text("INSERT INTO reviews (user_id, book_id, comment, rating) VALUES (:user_id, :book_id, :comment, :rating)")
+        db.execute(query, {"user_id": currentUser, "book_id": bookId, "comment": comment, "rating": rating})
 
         # Commit transactions to DB and close the connection
         db.commit()
@@ -223,9 +219,8 @@ def book(isbn):
     # Take the book ISBN and redirect to his page (GET)
     else:
 
-        row = db.execute("SELECT isbn, title, author, year FROM books WHERE \
-                        isbn = :isbn",
-                        {"isbn": isbn})
+        query = text("SELECT isbn, title, author, year FROM books WHERE isbn = :isbn")
+        row = db.execute(query, {"isbn": isbn})
 
         bookInfo = row.fetchall()
 
@@ -250,8 +245,8 @@ def book(isbn):
         """ Users reviews """
 
          # Search book_id by ISBN
-        row = db.execute("SELECT id FROM books WHERE isbn = :isbn",
-                        {"isbn": isbn})
+        query = text("SELECT id FROM books WHERE isbn = :isbn")
+        row = db.execute(query, {"isbn": isbn})
 
         # Save id into variable
         book = row.fetchone() # (id,)
@@ -259,14 +254,17 @@ def book(isbn):
 
         # Fetch book reviews
         # Date formatting (https://www.postgresql.org/docs/9.1/functions-formatting.html)
-        results = db.execute("SELECT users.username, comment, rating, \
-                            to_char(time, 'DD Mon YY - HH24:MI:SS') as time \
-                            FROM users \
-                            INNER JOIN reviews \
-                            ON users.id = reviews.user_id \
-                            WHERE book_id = :book \
-                            ORDER BY time",
-                            {"book": book})
+        query = text("""
+    SELECT users.username, comment, rating,
+    to_char(time, 'DD Mon YY - HH24:MI:SS') as time
+    FROM users
+    INNER JOIN reviews
+    ON users.id = reviews.user_id
+    WHERE book_id = :book
+    ORDER BY time
+""")
+
+        results = db.execute(query, {"book": book})
 
         reviews = results.fetchall()
 

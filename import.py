@@ -1,6 +1,9 @@
 import os, csv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # database engine object from SQLAlchemy that manages connections to the database
 engine = create_engine(os.getenv("DATABASE_URL"))

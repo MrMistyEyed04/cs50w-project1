@@ -28,10 +28,11 @@ def main():
     query02=db.execute(creacion02)
     creacion03 = text("""CREATE TABLE reviews (
     id_resena SERIAL NOT NULL,
-    id_usuario INTEGER NOT NULL,
-    id_libro INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    book_id INTEGER NOT NULL,
     rating INTEGER NOT NULL,
     comment TEXT
+    time TIMESTAMP
     );
     """)
     query03=db.execute(creacion03)

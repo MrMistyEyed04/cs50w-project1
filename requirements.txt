@@ -2,6 +2,7 @@ Flask
 Flask-Session
 psycopg2-binary
 SQLAlchemy
+requests
 
 certifi==2018.11.29
 chardet==3.0.4

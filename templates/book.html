@@ -19,7 +19,7 @@
 
         <!--GOODREADS REVIEWS -->
         <div class="col-sm-4">
-            <img class="mb-3" src="../static/goodreads.jpg" alt="Goodreads" width="200" height="45">
+            <img class="mb-3" src="../static/biblioteca.jpg" alt="Goodreads" width="200" height="45">
             <h5>Nº of Ratings: {{bookInfo[1]['work_ratings_count']}}</h5>
             <h5>Average Rating: {{bookInfo[1]['average_rating']}}</h5>
             <h5>
@@ -29,15 +29,15 @@
     </div>
     <div class="dropdown-divider"></div>
 
-    <h4 class="alert alert-warning">Users Reviews</h4>
-    <h5>Make your own review!</h5>
+    <h4 class="alert alert-warning">Reseñas de los usuarios</h4>
+    <h5>Haz tu propia reseña</h5>
 
     <div>
         <!-- REVIEW FORM -->
         <form method="POST" class="form-border">
             <div class="form-row">
                 <div class="form-group col-sm">
-                    <label for="rating">Rate this book</label>
+                    <label for="rating">Califica este libro</label>
                     <select id="rating" name="rating" class="form-control" required>
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -49,13 +49,13 @@
                 <div class="form-group col-sm-6">
                     <div class="input-group">
                         <div class="input-group-prepend">
-                            <span class="input-group-text">Say something</span>
+                            <span class="input-group-text">Di algo sobre este libro</span>
                         </div>
                         <textarea name="comment" id="comment" class="form-control" rows="1" required></textarea>
                     </div>
                 </div>
                 <div class="form-group col-sm">
-                    <button class="btn btn-success" type="submit">Submit</button>
+                    <button class="btn btn-success" type="submit">Enviar</button>
                 </div>
             </div>
         </form>
@@ -67,7 +67,7 @@
             <div class="list-group">
                 <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
                     <div class="d-flex w-100 justify-content-between">
-                        <h6 class="mb-1" style="color: papayawhip">{{review['username']}} said...</h6>
+                        <h6 class="mb-1" style="color: papayawhip">{{review['username']}} dijo:</h6>
                         <small>{{review['time']}}</small>
                     </div>
                     <p class="mb-1">{{review['comment']}}</p>
