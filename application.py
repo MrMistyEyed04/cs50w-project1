@@ -159,11 +159,11 @@ def search():
                        title LIKE :query OR \
                        author LIKE :query LIMIT 15')
 
-    rows = db.execute(sql_expression, query=query)
+    rows = db.execute(sql_expression, {"query": query})
     
     # Books not founded
     if rows.rowcount == 0:
-        return render_template("error.html", message="No se pudo encontar libro con esa descripcion.")
+        return render_template("error.html", message="No se pudo encontrar ningun libro con esa descripcion.")
     
     # Fetch all the results
     books = rows.fetchall()
