@@ -31,7 +31,7 @@ def main():
     user_id INTEGER NOT NULL,
     book_id INTEGER NOT NULL,
     rating INTEGER NOT NULL,
-    comment TEXT
+    comment TEXT,
     time TIMESTAMP
     );
     """)

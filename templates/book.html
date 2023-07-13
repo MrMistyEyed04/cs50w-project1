@@ -19,7 +19,7 @@
 
         <!--GOODREADS REVIEWS -->
         <div class="col-sm-4">
-            <img class="mb-3" src="../static/biblioteca.jpg" alt="Google Books" width="200" height="70">
+            <img class="mb-3" src="../static/biblioteca.jpg" alt="Google Books" width="200" height="75">
             <h5>Nº de reseñas: {{bookInfo[1]['work_ratings_count']}}</h5>
             <h5>Calificacion promedio: {{bookInfo[1]['average_rating']}}</h5>
         </div>
@@ -68,7 +68,7 @@
                         <small>{{review['time']}}</small>
                     </div>
                     <p class="mb-1">{{review['comment']}}</p>
-                    <small>Rated: {{review['rating']}}</small>
+                    <small>Calificacion: {{review['rating']}}</small>
                 </a>
                 <div class="dropdown-divider"></div>
             </div>
